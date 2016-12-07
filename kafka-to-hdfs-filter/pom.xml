@@ -4,7 +4,7 @@
 
   <groupId>com.datatorrent.apps</groupId>
   <version>0.8</version>
-  <artifactId>kafka-to-hdfs-filter</artifactId>
+  <artifactId>kafka-to-hdfs-filter-transform</artifactId>
   <packaging>jar</packaging>
 
   <!-- change these to the appropriate values -->

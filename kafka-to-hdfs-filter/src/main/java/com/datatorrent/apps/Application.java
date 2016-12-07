@@ -45,12 +45,17 @@ public class Application implements StreamingApplication
     KafkaSinglePortInputOperator kafkaInputOperator = dag.addOperator("kafkaInput", KafkaSinglePortInputOperator.class);
     CsvParser csvParser = dag.addOperator("csvParser", CsvParser.class);
     FilterOperator filterOperator = dag.addOperator("filter", new FilterOperator());
+    TransformOperator transform = dag.addOperator("transform", new TransformOperator());
+    Map<String, String> expMap = Maps.newHashMap();
+    expMap.put("name", "{$.name}.toUpperCase()");
+    transform.setExpressionMap(expMap);
     CsvFormatter formatter = dag.addOperator("formatter", new CsvFormatter());
     StringFileOutputOperator fileOutput = dag.addOperator("fileOutput", new StringFileOutputOperator());
 
     dag.addStream("data", kafkaInputOperator.outputPort, csvParser.in);
     dag.addStream("pojo", csvParser.out, filterOperator.input);
-    dag.addStream("filtered", filterOperator.truePort, formatter.in);
+    dag.addStream("filtered", filterOperator.truePort, transform.input);
+    dag.addStream("transformed", transform.output, formatter.in);
     dag.addStream("string", formatter.out, fileOutput.input);
 
     /*
